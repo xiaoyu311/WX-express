@@ -9,7 +9,9 @@
   "author": "xiaoyu",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.16.3"
+    "chalk": "^2.4.1",
+    "express": "^4.16.3",
+    "mongoose": "^5.0.17"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
