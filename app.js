@@ -1,6 +1,8 @@
 import express from 'express';
 import config from './config';
 import db from './connect';
+import articleSchema from './Schema/article';
+console.log(articleSchema)
 
 const app = express();
 const port = config.port;
