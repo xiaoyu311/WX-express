@@ -1,4 +1,6 @@
 import express from 'express';
+// 解析请求体
+import bodyParser from 'body-parser';
 import config from './config';
 import db from './connect';
 import router from './router';
@@ -13,11 +15,13 @@ app.all('*', (req, res, next) => {
   res.header("Access-Control-Allow-Credentials", true); //可以带cookies
   res.header("X-Powered-By", '3.2.1')
   if (req.method == 'OPTIONS') {
-    res.send(200);
+    res.sendStatus(200);
   } else {
     next();
   }
 });
+
+app.use(bodyParser());
 
 router(app);
 
