@@ -1,3 +1,4 @@
 export default (req, res, next) => {
-  res.json({one: 'one'});
+  
+  res.send({one: 'one'});
 }
