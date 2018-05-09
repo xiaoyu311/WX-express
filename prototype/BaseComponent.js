@@ -3,6 +3,7 @@ export default class BaseComponent {
   constructor() {
     this.idList = ['user_id', 'article_id'];
   }
+  // 计算id 避免id重复
   async IdComputed(type) {
     if (!this.idList.includes(type)) {
       console.log('id类型错误');
@@ -13,5 +14,13 @@ export default class BaseComponent {
     idData[type]++;
     await idData.save();
     return idData[type];
+  }
+  // 返回成功模板
+  Success(status, message, data) {
+    let sendData = { status, message };
+    if (data) {
+      sendData.data = data;
+    }
+    return sendData;
   }
 }
