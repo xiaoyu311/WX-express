@@ -4,7 +4,8 @@
   "description": "express-demo",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "start": "nodemon index.js"
   },
   "author": "xiaoyu",
   "license": "ISC",

@@ -3,8 +3,6 @@ import mongoose from 'mongoose';
 const IdSchema = mongoose.Schema({
   user_id: Number,
   article_id: Number
-}, {
-  _id: false  
 });
 
 const Ids = mongoose.model('Ids', IdSchema);

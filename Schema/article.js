@@ -5,7 +5,5 @@ const articleSchema = mongoose.Schema({
   type: String,
   title: String,
   content: String
-}, {
-  _id: false
 });
 export default articleSchema;
