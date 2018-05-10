@@ -8,6 +8,6 @@ export default {
     secret: 'xiaoyu18210670405',
     resave: true,
     saveUninitialized: false,
-    cookie: { maxAge: 1 * 1000 } // 过期时间（毫秒）
+    cookie: { maxAge: 30 * 60 * 1000 } // 过期时间（毫秒）
   }
 };

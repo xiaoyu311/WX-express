@@ -10,6 +10,7 @@ import router from './router';
 
 const app = express();
 const port = config.mongodb.port;
+const mongodbUrl = config.mongodb.mongodbUrl;
 
 app.all('*', (req, res, next) => {
   res.header("Access-Control-Allow-Origin", req.headers.Origin || req.headers.origin);
@@ -25,23 +26,16 @@ app.all('*', (req, res, next) => {
 });
 
 const MongoStore = connectMongo(session);
+
 app.use(bodyParser());
+app.use(cookieParser());
 
 app.use(session({
   ...config.session,
-  ...{
-    store: new MongoStore({
-      url: config.mongodb.mongodbUrl
-    })
-  }
+  store: new MongoStore({
+    url: mongodbUrl,
+  })
 }));
-
-// app.get('/', (req, res) => {
-//   console.log(req.sessionID)
-  
-//   // console.log(req.session.cookie);
-//   res.send(req.session)
-// });
 
 router(app);
 
