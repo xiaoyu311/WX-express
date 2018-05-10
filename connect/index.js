@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 import chalk from 'chalk';
 import config from '../config';
 
-mongoose.connect(config.mongodbUrl);
+mongoose.connect(config.mongodb.mongodbUrl);
 mongoose.Promise = global.Promise;
 
 const db = mongoose.connection;

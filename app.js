@@ -1,4 +1,7 @@
 import express from 'express';
+import session from 'express-session';
+import connectMongo from 'connect-mongo';
+import cookieParser from 'cookie-parser';
 // 解析请求体
 import bodyParser from 'body-parser';
 import config from './config';
@@ -6,7 +9,7 @@ import db from './connect';
 import router from './router';
 
 const app = express();
-const port = config.port;
+const port = config.mongodb.port;
 
 app.all('*', (req, res, next) => {
   res.header("Access-Control-Allow-Origin", req.headers.Origin || req.headers.origin);
@@ -21,7 +24,24 @@ app.all('*', (req, res, next) => {
   }
 });
 
+const MongoStore = connectMongo(session);
 app.use(bodyParser());
+
+app.use(session({
+  ...config.session,
+  ...{
+    store: new MongoStore({
+      url: config.mongodb.mongodbUrl
+    })
+  }
+}));
+
+// app.get('/', (req, res) => {
+//   console.log(req.sessionID)
+  
+//   // console.log(req.session.cookie);
+//   res.send(req.session)
+// });
 
 router(app);
 
