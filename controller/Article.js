@@ -10,14 +10,26 @@ class Article extends BaseComponent {
   }
   // 添加文章
   async article_add(req, res, next) {
-    let article_id = await this.IdComputed('article_id');
-    const { title, type, content } = req.body;
-    await ArticleModel.create({ article_id, title, type, content });
-    res.send(this.Success(1, '文章添加成功'));
+    if (req.session.user_id) {
+      let article_id = await this.IdComputed('article_id');
+      const { title, type, content } = req.body;
+      await ArticleModel.create({
+        article_id,
+        user_id: req.session.user_id,
+        username: req.session.username,
+        title,
+        type,
+        content
+      });
+      res.send(this.Success(1, '文章添加成功'));
+    } else {
+      res.send(this.Success(0, '未登录'));
+    }
     return;
   }
   // 文章列表
   async article_list(req, res, next) {
+    console.log(req.session.user_id);
     let articleList = await ArticleModel.find();
     res.send(this.Success(1, '文章列表', articleList));
     return;
