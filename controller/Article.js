@@ -1,12 +1,14 @@
 import BaseComponent from '../prototype/BaseComponent';
 import ArticleModel from '../Models/Article';
+import UserModel from '../Models/User';
 
 class Article extends BaseComponent {
-  constructor() { 
+  constructor() {
     super()
     this.article_add = this.article_add.bind(this);
     this.article_list = this.article_list.bind(this);
     this.article_remove = this.article_remove.bind(this);
+    this.collection = this.collection.bind(this);
   }
   // 添加文章
   async article_add(req, res, next) {
@@ -42,6 +44,23 @@ class Article extends BaseComponent {
     let articleList = await ArticleModel.find();
     res.send(this.Success(1, '删除成功', articleList));
     return;
+  }
+  // 添加收藏文章
+  async collection(req, res, next) {
+    const article_id = req.query.article_id;
+    const user_id = req.session.user_id;
+    let userInfo = await UserModel.findOne({ user_id });
+    if (userInfo.collections.includes(article_id)) {
+      let index = userInfo.collections.indexOf(article_id);
+      userInfo.collections.splice(index, 1);
+      userInfo.save();
+      res.send(this.Success(1, '取消收藏成功'));
+    } else {
+      userInfo.collections.push(article_id);
+      userInfo.save();
+      res.send(this.Success(1, '收藏成功'));
+    }
+    console.log(article_id)
   }
 }
 
