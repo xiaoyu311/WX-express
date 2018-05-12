@@ -6,6 +6,7 @@ const articleSchema = mongoose.Schema({
   username: String,
   title: String,
   type: Array,
-  content: String
+  content: String,
+  star: Number
 });
 export default articleSchema;

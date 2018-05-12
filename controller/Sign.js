@@ -13,7 +13,7 @@ class Sign extends BaseComponent {
     let User = await UserModel.findOne({ username });
     if (!User) {
       let user_id = await this.IdComputed('user_id');
-      const newUser = { user_id, username, password };
+      const newUser = { user_id, username, password, collection: [] };
       await UserModel.create(newUser);
       req.session.user_id = user_id;
       req.session.username = username;

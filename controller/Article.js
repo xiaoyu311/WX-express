@@ -19,7 +19,8 @@ class Article extends BaseComponent {
         username: req.session.username,
         title,
         type,
-        content
+        content,
+        star: 0
       });
       res.send(this.Success(1, '文章添加成功'));
     } else {
