@@ -50,17 +50,21 @@ class Article extends BaseComponent {
     const article_id = req.query.article_id;
     const user_id = req.session.user_id;
     let userInfo = await UserModel.findOne({ user_id });
+    let articleInfo = await ArticleModel.findOne({ article_id });
     if (userInfo.collections.includes(article_id)) {
       let index = userInfo.collections.indexOf(article_id);
       userInfo.collections.splice(index, 1);
+      articleInfo.star--;
+      articleInfo.save();
       userInfo.save();
       res.send(this.Success(1, '取消收藏成功'));
     } else {
       userInfo.collections.push(article_id);
+      articleInfo.star++;
+      articleInfo.save();
       userInfo.save();
       res.send(this.Success(1, '收藏成功'));
     }
-    console.log(article_id)
   }
 }
 
