@@ -1,6 +1,8 @@
 import BaseComponent from '../prototype/BaseComponent';
 import ArticleModel from '../Models/Article';
 import UserModel from '../Models/User';
+import superagent from 'superagent';
+import cheerio from 'cheerio';
 
 class Article extends BaseComponent {
   constructor() {
@@ -32,9 +34,29 @@ class Article extends BaseComponent {
   }
   // 文章列表
   async article_list(req, res, next) {
-    console.log(req.session.user_id);
-    let articleList = await ArticleModel.find();
-    res.send(this.Success(1, '文章列表', articleList));
+    let that = this;
+    superagent.get('https://cnodejs.org/').end((err, sres) => {
+      if (err) {
+        throw new Error('superagent');
+        res.send({ status: 0, message: 'oen', one: sres });
+      }
+      const $ = cheerio.load(sres.text);
+      $('#topic_list .cell').each(async function (index, element) {
+        let obj = {};
+        let article_id = Math.random();
+        let user_id = Math.random();
+        obj.article_id = article_id;
+        obj.user_id = user_id;
+        obj.username = $(this).find('.user_avatar').find('img').attr('title');
+        obj.title = $(this).find('.topic_title').attr('title');
+        obj.type = $(this).find('.put_top').text();
+        console.log(obj);
+      });
+      res.send({ status: 1, message: 'oen', one: [] });
+    })
+    // console.log(req.session.user_id);
+    // let articleList = await ArticleModel.find();
+    // res.send(this.Success(1, '文章列表', articleList));
     return;
   }
   //文章删除

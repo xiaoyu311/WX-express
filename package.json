@@ -12,12 +12,14 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "chalk": "^2.4.1",
+    "cheerio": "^1.0.0-rc.2",
     "connect-mongo": "^2.0.1",
     "cookie-parser": "^1.4.3",
     "express": "^4.16.3",
     "express-session": "^1.15.6",
     "mongoose": "^5.0.17",
-    "nodemon": "^1.17.4"
+    "nodemon": "^1.17.4",
+    "superagent": "^3.8.3"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
