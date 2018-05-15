@@ -10,8 +10,14 @@ const articleSchema = mongoose.Schema({
     type: String,
     default: ''
   }, // 最后回复时间
-  good: Boolean, // 精华是否
-  top: Boolean, // 置顶是否
+  good: {
+    type: Boolean,
+    default: false
+  }, // 精华是否
+  top: {
+    type: Boolean,
+    default: false
+  }, // 置顶是否
   reply_count: {
     type: String,
     default: 0
@@ -20,7 +26,10 @@ const articleSchema = mongoose.Schema({
     type: String,
     default: 0
   }, // 点赞数量
-  create_at: String, // 创建时间
+  create_at: {
+    type: String,
+    default: new Date().getTime()
+  }, // 创建时间
   author: {
     loginname: String, // 作者名字
     avatar_url: {

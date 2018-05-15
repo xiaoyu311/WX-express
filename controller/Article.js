@@ -12,11 +12,17 @@ class Article extends BaseComponent {
   }
   // 添加文章
   async article_add(req, res, next) {
-    // if (req.session.user_id) {
-      // let article_id = await this.IdComputed('article_id');
-    // } else {
-      // res.send(this.Success(0, '未登录'));
-    // }
+    const { author_id, loginname } = req.session;
+    if (author_id) {
+      const { tab, content, title } = req.body;
+      let article_id = await this.IdComputed('article_id');
+      let newArticle = { author_id, article_id, tab, content, title, author: { loginname } };
+      // newArticle.author.loginname = loginname;
+      await ArticleModel.create(newArticle);
+      res.send(this.Success(1, '发表成功'));
+    } else {
+      res.send(this.Success(0, '未登录'));
+    }
     return;
   }
   // 文章列表
