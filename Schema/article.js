@@ -2,16 +2,31 @@ import mongoose from 'mongoose';
 
 const articleSchema = mongoose.Schema({
   article_id: String, // 文章id
-  user_id: String, // 作者id
-  username: String, // 作者
-  title: String, // 标题
-  type: Array, // 类型
+  author_id: String, // 作者id
+  tab: String, // 类型
   content: String, // 内容
-  visit_count: String, // 关注量
-  reply_count: String, // 回复量
-  last_reply_at: String, // 最后恢复时间
-  top: Boolean, // 知否置顶
-  avatar_url: String, // 作者图标
-  last_reply_url: String // 回复人图标
+  title: String, // 标题
+  last_reply_at: {
+    type: String,
+    default: ''
+  }, // 最后回复时间
+  good: Boolean, // 精华是否
+  top: Boolean, // 置顶是否
+  reply_count: {
+    type: String,
+    default: 0
+  }, // 回复数量
+  visit_count: {
+    type: String,
+    default: 0
+  }, // 点赞数量
+  create_at: String, // 创建时间
+  author: {
+    loginname: String, // 作者名字
+    avatar_url: {
+      type: String, // 头像地址
+      default: 'https://avatars3.githubusercontent.com/u/8339316?v=4&s=120'
+    }
+  }
 });
 export default articleSchema;

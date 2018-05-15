@@ -9,19 +9,19 @@ class Sign extends BaseComponent {
   
   //注册接口
   async signup(req, res, next) {
-    const { username, password } = req.body;
-    let User = await UserModel.findOne({ username });
+    const { loginname, password } = req.body;
+    let User = await UserModel.findOne({ loginname });
     if (!User) {
-      let user_id = await this.IdComputed('user_id');
-      const newUser = { user_id, username, password, collection: [] };
+      let author_id = await this.IdComputed('author_id');
+      const newUser = { password, author_id, loginname };
       await UserModel.create(newUser);
-      req.session.user_id = user_id;
-      req.session.username = username;
+      req.session.author_id = author_id;
+      req.session.loginname = loginname;
       res.send(this.Success(1, '用户注册成功'));
     } else {
       if (User.password == password) {
-        req.session.user_id = User.user_id;
-        req.session.username = username;
+        req.session.author_id = User.author_id;
+        req.session.loginname = loginname;
         res.send(this.Success(1, '登陆成功'));
       } else {
         res.send(this.Success(0, '密码错误'));

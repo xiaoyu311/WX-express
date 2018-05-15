@@ -1,7 +1,7 @@
 import Ids from '../Models/Ids';
 export default class BaseComponent {
   constructor() {
-    this.idList = ['user_id', 'article_id'];
+    this.idList = ['author_id', 'article_id'];
   }
   // 计算id 避免id重复
   async IdComputed(type) {
