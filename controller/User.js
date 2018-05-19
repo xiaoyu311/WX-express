@@ -11,9 +11,11 @@ class User extends BaseComponent {
     try {
       let UserList = await UserModel.find();
       this.Success(res, 1, '用户列表', UserList);
+      return;
     } catch (error) {
       throw new Error('用户查询出错');
       this.Fail(res);
+      return;
     }
   }
 } 

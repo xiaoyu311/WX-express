@@ -18,18 +18,22 @@ class Sign extends BaseComponent {
         if (err) {
           throw new Error('用户创建失败'); 
           this.Fail(res);
+          return;
         }
         req.session.user_id = user_id;
         req.session.loginname = loginname;
         this.Success(res, 1, '用户注册成功');
+        return;
       });
     } else {
       if (User.password == password) {
         req.session.user_id = User.user_id;
         req.session.loginname = loginname;
         this.Success(res, 1, '登陆成功');
+        return;
       } else {
         this.Success(res, 0, '密码错误');
+        return;
       }
     }
   }

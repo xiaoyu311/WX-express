@@ -23,12 +23,15 @@ class Article extends BaseComponent {
       ArticleModel.create(newArticle, err => {
         if (err) {
           throw new Error('文章添加失败');
-          this.Fail(res); 
+          this.Fail(res);
+          return;
         }
         this.Success(res, 1, '发表添加成功');
+        return;
       });
     } else {
       this.Success(res, 0, '未登录');
+      return;
     }
   }
   // 文章列表
@@ -77,41 +80,71 @@ class Article extends BaseComponent {
         if (err) {
           throw new Error(err);
           this.Fail(res);
+          return;
         }
         this.Success(res, 1, '文章列表', results);
+        return;
       }
     );
   }
   //文章删除
-  async article_remove(req, res, next) {
+  article_remove(req, res, next) {
+    let user_id = req.session.user_id;
     let article_id = req.body.article_id;
-    ArticleModel.deleteOne({ article_id }, err => {
-      if (err) {
-        this.Fail(res);
+    async.each([
+      async () => {
+        await ArticleModel.deleteOne({ article_id });
+      },
+      async () => {
+        await CollectModel.deleteOne({ user_id, article_id });
       }
-      ArticleModel.find({}, (err, result) => {
+    ],
+      async (item, callback) => {
+        await item();
+        await callback();
+      },
+      err => {
         if (err) {
           this.Fail(res);
+          return;
         }
-        this.Success(res, 1, '删除成功', result);
-      });
-    });
+        ArticleModel.find({}, (err, result) => {
+          if (err) {
+            this.Fail(res);
+            return;
+          }
+          this.Success(res, 1, '删除成功', result);
+          return;
+        });
+      }
+    );
   }
   // 添加收藏文章
   async collection(req, res, next) {
     let user_id = req.session.user_id;
     if (user_id) {
       const { article_id } = req.body;
-      CollectModel.create({ user_id, article_id }, err => {
-        if (err) {
-          this.Fail(res);
-          throw new Error('收藏失败');
+      try {
+        let results = await CollectModel.findOne({ user_id });
+        if (results) {
+          this.Success(res, 0, '文章已收藏');
+          return;
         }
+        await CollectModel.create({ user_id, article_id });
+        let ArticleInfo = await ArticleModel({ article_id });
+        ArticleInfo['visit_count']++;
+        console.log(ArticleInfo)
+        // await ArticleInfo.save();
         this.Success(res, 1, '收藏成功');
-      });
-      
+      } catch (err) {
+        throw new Error('收藏失败');
+        this.Fail(res);
+        return;
+      }
+      // this.Success(res, 1, '收藏成功');
     } else {
       this.Success(res, 0, '未登录');
+      return;
     }
   }
   // 删除所有文章
