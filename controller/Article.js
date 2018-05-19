@@ -1,6 +1,7 @@
 import BaseComponent from '../prototype/BaseComponent';
 import ArticleModel from '../Models/Article';
 import UserModel from '../Models/User';
+import CollectModel from '../Models/Collect';
 import async from 'async';
 
 class Article extends BaseComponent {
@@ -10,6 +11,7 @@ class Article extends BaseComponent {
     this.article_list = this.article_list.bind(this);
     this.article_remove = this.article_remove.bind(this);
     this.collection = this.collection.bind(this);
+    this.clear = this.clear.bind(this);
   }
   // 添加文章
   async article_add(req, res, next) {
@@ -83,13 +85,38 @@ class Article extends BaseComponent {
   //文章删除
   async article_remove(req, res, next) {
     let article_id = req.body.article_id;
-    await ArticleModel.deleteOne({ article_id });
-    let articleList = await ArticleModel.find();
-    res.send(this.Success(1, '删除成功', articleList));
-    return;
+    ArticleModel.deleteOne({ article_id }, err => {
+      if (err) {
+        this.Fail(res);
+      }
+      ArticleModel.find({}, (err, result) => {
+        if (err) {
+          this.Fail(res);
+        }
+        this.Success(res, 1, '删除成功', result);
+      });
+    });
   }
   // 添加收藏文章
   async collection(req, res, next) {
+    let user_id = req.session.user_id;
+    if (user_id) {
+      const { article_id } = req.body;
+      CollectModel.create({ user_id, article_id }, err => {
+        if (err) {
+          this.Fail(res);
+          throw new Error('收藏失败');
+        }
+        this.Success(res, 1, '收藏成功');
+      });
+      
+    } else {
+      this.Success(res, 0, '未登录');
+    }
+  }
+  // 删除所有文章
+  clear(req, res) {
+    this.Clear(ArticleModel);
   }
 }
 

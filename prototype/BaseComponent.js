@@ -29,4 +29,9 @@ export default class BaseComponent {
     res.send(sendData);
     return;
   }
+  // 集合清空
+  Clear(Model) {
+    Model.remove();
+    return;
+  }
 }
