@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const UserSchema = mongoose.Schema({
-  author_id: String, // 作者id
+  user_id: String, // 作者id
   loginname: String, // 作者名字
   password: String,
   avatar_url: {

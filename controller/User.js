@@ -10,13 +10,11 @@ class User extends BaseComponent {
   async info(req, res, next) {
     try {
       let UserList = await UserModel.find();
-      res.send(this.Success(1, '用户列表', UserList));
+      this.Success(res, 1, '用户列表', UserList);
     } catch (error) {
       throw new Error('用户查询出错');
-      return;
-      // res.send(this.Success(1, '用户列表', UserList));
+      this.Fail(res);
     }
-    return;
   }
 } 
 

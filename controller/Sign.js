@@ -12,19 +12,24 @@ class Sign extends BaseComponent {
     const { loginname, password } = req.body;
     let User = await UserModel.findOne({ loginname });
     if (!User) {
-      let author_id = await this.IdComputed('author_id');
-      const newUser = { password, author_id, loginname };
-      await UserModel.create(newUser);
-      req.session.author_id = author_id;
-      req.session.loginname = loginname;
-      res.send(this.Success(1, '用户注册成功'));
+      let user_id = await this.IdComputed('user_id');
+      const newUser = { password, user_id, loginname };
+      UserModel.create(newUser, err => {
+        if (err) {
+          throw new Error('用户创建失败'); 
+          this.Fail(res);
+        }
+        req.session.user_id = user_id;
+        req.session.loginname = loginname;
+        this.Success(res, 1, '用户注册成功');
+      });
     } else {
       if (User.password == password) {
-        req.session.author_id = User.author_id;
+        req.session.user_id = User.user_id;
         req.session.loginname = loginname;
-        res.send(this.Success(1, '登陆成功'));
+        this.Success(res, 1, '登陆成功');
       } else {
-        res.send(this.Success(0, '密码错误'));
+        this.Success(res, 0, '密码错误');
       }
     }
   }

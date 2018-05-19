@@ -13,24 +13,21 @@ class Article extends BaseComponent {
   }
   // 添加文章
   async article_add(req, res, next) {
-    const { author_id, loginname } = req.session;
-    if (author_id) {
+    const { user_id, loginname } = req.session;
+    if (user_id) {
       const { tab, content, title } = req.body;
       let article_id = await this.IdComputed('article_id');
-      let newArticle = { author_id, article_id, tab, content, title };
+      let newArticle = { author_id: user_id, article_id, tab, content, title };
       ArticleModel.create(newArticle, err => {
         if (err) {
           throw new Error('文章添加失败');
-          res.send(this.Success(0, '发表添加失败'));
-          return; 
+          this.Fail(res); 
         }
-        res.send(this.Success(1, '发表添加成功'));
-        return;
+        this.Success(res, 1, '发表添加成功');
       });
     } else {
-      res.send(this.Success(0, '未登录'));
+      this.Success(res, 0, '未登录');
     }
-    return;
   }
   // 文章列表
   async article_list(req, res, next) {
@@ -38,10 +35,10 @@ class Article extends BaseComponent {
     async.map(
       articleList,
       (articleInfo, callback) => {
-        UserModel.findOne({ author_id: articleInfo.author_id }, (err, UserInfo) => {
+        UserModel.findOne({ user_id: articleInfo.author_id }, (err, UserInfo) => {
           if (err) {
             callback('文章列表错误');
-            return;
+            this.Fail(res);
           }
           const { loginname, avatar_url } = UserInfo;
           const { article_id,
@@ -77,11 +74,9 @@ class Article extends BaseComponent {
       (err, results) => {
         if (err) {
           throw new Error(err);
-          res.sendStatus(500);
-          return;
+          this.Fail(res);
         }
-        res.send(this.Success(1, '文章列表', results));
-        return;
+        this.Success(res, 1, '文章列表', results);
       }
     );
   }
