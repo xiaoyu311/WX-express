@@ -1,6 +1,6 @@
 export default {
   mongodb: {
-    port: 8001,
+    port: 8888,
     mongodbUrl: 'mongodb://127.0.0.1:27017/WX'
   },
   session: {
