@@ -17,46 +17,16 @@ class Article extends BaseComponent {
     if (author_id) {
       const { tab, content, title } = req.body;
       let article_id = await this.IdComputed('article_id');
-      async.mapLimit(
-        [
-          async () => {
-            console.log(article_id)
-            let newArticle = { author_id, article_id, tab, content, title, author: { loginname } };
-            await ArticleModel.create(newArticle);
-          },
-          async () => {
-            let articleInfo = {
-              article_id,
-              title,
-              author: {
-                loginname,
-                avatar_url: 'https://avatars1.githubusercontent.com/u/1147375?v=4&s=120'
-              },
-              last_reply_at: ''
-            };
-            let User = await UserModel.findOne({ author_id });
-            User.recent_topics.unshift(articleInfo);
-            await User.save();
-          }
-        ],
-        2,
-        async (item, callback) => {
-          await item();
-          await callback();
-        },
-        (err, result) => {
-          if (err) {
-            throw new Error('文章添加失败');
-            res.send(this.Success(0, '发表添加失败'));
-            return;
-          }
-          res.send(this.Success(1, '发表添加成功'));
-        });
-
-
-
-      // newArticle.author.loginname = loginname;
-
+      let newArticle = { author_id, article_id, tab, content, title };
+      ArticleModel.create(newArticle, err => {
+        if (err) {
+          throw new Error('文章添加失败');
+          res.send(this.Success(0, '发表添加失败'));
+          return; 
+        }
+        res.send(this.Success(1, '发表添加成功'));
+        return;
+      });
     } else {
       res.send(this.Success(0, '未登录'));
     }
@@ -64,11 +34,56 @@ class Article extends BaseComponent {
   }
   // 文章列表
   async article_list(req, res, next) {
-    // console.log(async)
-    // console.log(req.session.user_id);
     let articleList = await ArticleModel.find();
-    res.send(this.Success(1, '文章列表', articleList));
-    return;
+    async.map(
+      articleList,
+      (articleInfo, callback) => {
+        UserModel.findOne({ author_id: articleInfo.author_id }, (err, UserInfo) => {
+          if (err) {
+            callback('文章列表错误');
+            return;
+          }
+          const { loginname, avatar_url } = UserInfo;
+          const { article_id,
+            author_id,
+            tab,
+            content,
+            title,
+            last_reply_at,
+            good,
+            top,
+            reply_count,
+            visit_count,
+            create_at } = articleInfo;
+          callback(null, {
+            article_id,
+            author_id,
+            tab,
+            content,
+            title,
+            last_reply_at,
+            good,
+            top,
+            reply_count,
+            visit_count,
+            create_at,
+            author: {
+              loginname,
+              avatar_url
+            }
+          });
+        });
+      },
+      (err, results) => {
+        if (err) {
+          throw new Error(err);
+          res.sendStatus(500);
+          return;
+        }
+        res.send(this.Success(1, '文章列表', results));
+        return;
+      }
+    );
   }
   //文章删除
   async article_remove(req, res, next) {

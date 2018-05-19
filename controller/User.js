@@ -8,8 +8,14 @@ class User extends BaseComponent {
   }
   // 查看用户信息
   async info(req, res, next) {
-    let UserList = await UserModel.find();
-    res.send(this.Success(1, '用户列表', UserList));
+    try {
+      let UserList = await UserModel.find();
+      res.send(this.Success(1, '用户列表', UserList));
+    } catch (error) {
+      throw new Error('用户查询出错');
+      return;
+      // res.send(this.Success(1, '用户列表', UserList));
+    }
     return;
   }
 } 

@@ -30,12 +30,5 @@ const articleSchema = mongoose.Schema({
     type: String,
     default: new Date().getTime()
   }, // 创建时间
-  author: {
-    loginname: String, // 作者名字
-    avatar_url: {
-      type: String, // 头像地址
-      default: 'https://avatars3.githubusercontent.com/u/8339316?v=4&s=120'
-    }
-  }
 });
 export default articleSchema;
