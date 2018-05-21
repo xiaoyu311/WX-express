@@ -9,6 +9,7 @@ class Article extends BaseComponent {
     super()
     this.article_add = this.article_add.bind(this);
     this.article_list = this.article_list.bind(this);
+    this.article_update = this.article_update.bind(this);
     this.article_remove = this.article_remove.bind(this);
     this.collection = this.collection.bind(this);
     this.collection_list = this.collection_list.bind(this);
@@ -88,6 +89,23 @@ class Article extends BaseComponent {
       }
     );
   }
+  // 文章更新
+  article_update(req, res) {
+    let user_id = req.session.user_id;
+    if (!user_id) {
+      this.Success(res, 0, '未登录');
+      return;
+    }
+    let { article_id, title, type, content } = res.body;
+    ArticleModel.update({ article_id }, { title, type, content }, (err, result) => {
+      if (err) {
+        this.Fail(res);
+        throw new Error('文章更新失败');
+        return;
+      }
+      this.Success(res, 1, '更新成功');
+    });
+  }
   //文章删除
   article_remove(req, res, next) {
     let user_id = req.session.user_id;
@@ -134,7 +152,7 @@ class Article extends BaseComponent {
         await CollectModel.create({ user_id, article_id });
         let ArticleInfo = await ArticleModel.findOne({ article_id });
         ArticleInfo['visit_count']++;
-        console.log(ArticleInfo)
+        // console.log(ArticleInfo)
         await ArticleInfo.save();
         this.Success(res, 1, '收藏成功');
       } catch (err) {
@@ -159,7 +177,6 @@ class Article extends BaseComponent {
       throw new Error('收藏列表查看失败');
       return;
     }
-
   }
   // 删除所有文章
   clear(req, res) {
