@@ -11,6 +11,7 @@ class Article extends BaseComponent {
     this.article_list = this.article_list.bind(this);
     this.article_remove = this.article_remove.bind(this);
     this.collection = this.collection.bind(this);
+    this.collection_list = this.collection_list.bind(this);
     this.clear = this.clear.bind(this);
   }
   // 添加文章
@@ -131,10 +132,10 @@ class Article extends BaseComponent {
           return;
         }
         await CollectModel.create({ user_id, article_id });
-        let ArticleInfo = await ArticleModel({ article_id });
+        let ArticleInfo = await ArticleModel.findOne({ article_id });
         ArticleInfo['visit_count']++;
         console.log(ArticleInfo)
-        // await ArticleInfo.save();
+        await ArticleInfo.save();
         this.Success(res, 1, '收藏成功');
       } catch (err) {
         throw new Error('收藏失败');
@@ -146,6 +147,19 @@ class Article extends BaseComponent {
       this.Success(res, 0, '未登录');
       return;
     }
+  }
+  // 添加收藏文章
+  async collection_list(req, res) {
+    try {
+      let collectionList = await CollectModel.find();
+      this.Success(res, 1, '收藏列表', collectionList);
+      return;
+    } catch (err) {
+      this.Fail(res);
+      throw new Error('收藏列表查看失败');
+      return;
+    }
+
   }
   // 删除所有文章
   clear(req, res) {
