@@ -18,6 +18,7 @@ class Article extends BaseComponent {
   // 添加文章
   async article_add (req, res, next) {
     const { user_id, loginname } = req.session;
+    console.log(req.session)
     if (user_id) {
       const { tab, content, title } = req.body;
       let article_id = await this.IdComputed('article_id');
