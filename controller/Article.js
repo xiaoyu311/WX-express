@@ -16,7 +16,7 @@ class Article extends BaseComponent {
     this.clear = this.clear.bind(this);
   }
   // 添加文章
-  async article_add(req, res, next) {
+  async article_add (req, res, next) {
     const { user_id, loginname } = req.session;
     if (user_id) {
       const { tab, content, title } = req.body;
