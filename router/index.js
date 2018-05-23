@@ -9,6 +9,7 @@ export default app => {
   app.use('/sign', sign);
   app.use('/user', user);
   app.get('/getcookie', (req, res) => { 
+    console.log(req.sessionID)
     res.send({ status: 1, message: '获取cookie成功' });
   });
 }
