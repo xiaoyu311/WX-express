@@ -40,6 +40,7 @@ class Article extends BaseComponent {
   }
   // 文章列表
   async article_list(req, res, next) {
+    console.log(req.sessionID);
     let articleList = await ArticleModel.find();
     async.map(
       articleList,
