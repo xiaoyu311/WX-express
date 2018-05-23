@@ -5,7 +5,7 @@ export default {
   },
   session: {
     name: 'xiaoyu',
-    secret: 'xiaoyu18210670405',
+    //secret: 'xiaoyu18210670405',
     resave: false, //  //每次请求是否需要重新设置cookie
     saveUninitialized: false, // //无论是否有cookie,设置标记connect.sid可改名
     cookie: { maxAge: 30 * 60 * 1000 } // 过期时间（毫秒）
