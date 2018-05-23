@@ -17,6 +17,7 @@ class Article extends BaseComponent {
   }
   // 添加文章
   async article_add (req, res, next) {
+    console.log(req.sessionID);
     const { user_id, loginname } = req.session;
     console.log(req.session)
     if (user_id) {
