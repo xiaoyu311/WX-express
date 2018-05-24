@@ -12,7 +12,7 @@ const articleSchema = mongoose.Schema({
   }, // 最后回复时间
   good: {
     type: Boolean,
-    default: false
+    default: true
   }, // 精华是否
   top: {
     type: Boolean,
