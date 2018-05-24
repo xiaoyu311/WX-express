@@ -16,7 +16,7 @@ const articleSchema = mongoose.Schema({
   }, // 精华是否
   top: {
     type: Boolean,
-    default: false
+    default: true
   }, // 置顶是否
   reply_count: {
     type: String,
