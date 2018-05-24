@@ -8,7 +8,7 @@ export default app => {
   app.use('/article', article);
   app.use('/sign', sign);
   app.use('/user', user);
-  app.get('/getcookie', (req, res) => { 
+  app.post('/getcookie', (req, res) => { 
     req.session.set = req.sessionID;
     console.log(req.sessionID)
     res.send({ status: 1, message: '获取cookie成功' });
