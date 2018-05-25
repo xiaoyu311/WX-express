@@ -16,14 +16,27 @@ class Article extends BaseComponent {
     this.clear = this.clear.bind(this);
   }
   // 添加文章
-  async article_add (req, res, next) {
+  async article_add(req, res, next) {
     console.log(req.sessionID);
-    const { user_id, loginname } = req.session;
+    const {
+      user_id,
+      loginname
+    } = req.session;
     console.log(req.session)
     if (user_id) {
-      const { tab, content, title } = req.body;
+      const {
+        tab,
+        content,
+        title
+      } = req.body;
       let article_id = await this.IdComputed('article_id');
-      let newArticle = { author_id: user_id, article_id, tab, content, title };
+      let newArticle = {
+        author_id: user_id,
+        article_id,
+        tab,
+        content,
+        title
+      };
       ArticleModel.create(newArticle, err => {
         if (err) {
           throw new Error('文章添加失败');
@@ -45,39 +58,62 @@ class Article extends BaseComponent {
     async.map(
       articleList,
       (articleInfo, callback) => {
-        UserModel.findOne({ user_id: articleInfo.author_id }, (err, UserInfo) => {
+        UserModel.findOne({
+          user_id: articleInfo.author_id
+        }, (err, UserInfo) => {
           if (err) {
             callback('文章列表错误');
             this.Fail(res);
+            return;
           }
-          const { loginname, avatar_url } = UserInfo;
-          const { article_id,
-            author_id,
-            tab,
-            content,
-            title,
-            last_reply_at,
-            good,
-            top,
-            reply_count,
-            visit_count,
-            create_at } = articleInfo;
-          callback(null, {
-            article_id,
-            author_id,
-            tab,
-            content,
-            title,
-            last_reply_at,
-            good,
-            top,
-            reply_count,
-            visit_count,
-            create_at,
-            author: {
+          CollectModel.findOne({
+            user_id: req.session.user_id,
+            article_id: articleInfo.article_id
+          }, (err, collectInfo) => {
+            let collected = false;
+            if (err) {
+              callback('文章列表错误');
+              this.Fail(res);
+              return;
+            }
+            if (collectInfo) {
+              collected = true;
+            }
+            const {
               loginname,
               avatar_url
-            }
+            } = UserInfo;
+            const {
+              article_id,
+              author_id,
+              tab,
+              content,
+              title,
+              last_reply_at,
+              good,
+              top,
+              reply_count,
+              visit_count,
+              create_at
+            } = articleInfo;
+            callback(null, {
+              article_id,
+              author_id,
+              tab,
+              content,
+              title,
+              last_reply_at,
+              good,
+              top,
+              reply_count,
+              visit_count,
+              create_at,
+              collected,
+              author: {
+                loginname,
+                avatar_url
+              }
+            });
           });
         });
       },
@@ -99,8 +135,19 @@ class Article extends BaseComponent {
       this.Success(res, 0, '未登录');
       return;
     }
-    let { article_id, title, type, content } = res.body;
-    ArticleModel.update({ article_id }, { title, type, content }, (err, result) => {
+    let {
+      article_id,
+      title,
+      type,
+      content
+    } = res.body;
+    ArticleModel.update({
+      article_id
+    }, {
+      title,
+      type,
+      content
+    }, (err, result) => {
       if (err) {
         this.Fail(res);
         throw new Error('文章更新失败');
@@ -114,13 +161,18 @@ class Article extends BaseComponent {
     let user_id = req.session.user_id;
     let article_id = req.body.article_id;
     async.each([
-      async () => {
-        await ArticleModel.deleteOne({ article_id });
-      },
-      async () => {
-        await CollectModel.deleteOne({ user_id, article_id });
-      }
-    ],
+        async () => {
+          await ArticleModel.deleteOne({
+            article_id
+          });
+        },
+        async () => {
+          await CollectModel.deleteOne({
+            user_id,
+            article_id
+          });
+        }
+      ],
       async (item, callback) => {
         await item();
         await callback();
@@ -145,15 +197,24 @@ class Article extends BaseComponent {
   async collection(req, res, next) {
     let user_id = req.session.user_id;
     if (user_id) {
-      const { article_id } = req.body;
+      const {
+        article_id
+      } = req.body;
       try {
-        let results = await CollectModel.findOne({ user_id });
+        let results = await CollectModel.findOne({
+          user_id
+        });
         if (results) {
           this.Success(res, 0, '文章已收藏');
           return;
         }
-        await CollectModel.create({ user_id, article_id });
-        let ArticleInfo = await ArticleModel.findOne({ article_id });
+        await CollectModel.create({
+          user_id,
+          article_id
+        });
+        let ArticleInfo = await ArticleModel.findOne({
+          article_id
+        });
         ArticleInfo['visit_count']++;
         // console.log(ArticleInfo)
         await ArticleInfo.save();
