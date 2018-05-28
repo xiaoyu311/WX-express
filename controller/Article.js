@@ -96,6 +96,7 @@ class Article extends BaseComponent {
               visit_count,
               create_at
             } = articleInfo;
+            let newCreate_at = this.formatTime(create_at);
             callback(null, {
               article_id,
               author_id,
@@ -107,7 +108,7 @@ class Article extends BaseComponent {
               top,
               reply_count,
               visit_count,
-              create_at,
+              create_at: newCreate_at,
               collected,
               author: {
                 loginname,
