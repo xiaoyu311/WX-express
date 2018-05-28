@@ -7,6 +7,9 @@ import bodyParser from 'body-parser';
 import config from './config';
 import db from './connect';
 import router from './router';
+import moment from 'moment';
+
+moment.locale('zh-cn'); // 使用中文
 
 const app = express();
 const port = config.mongodb.port;
