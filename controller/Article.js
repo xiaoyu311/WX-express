@@ -97,6 +97,7 @@ class Article extends BaseComponent {
               create_at
             } = articleInfo;
             let newCreate_at = this.formatTime(create_at);
+            console.log(newCreate_at);
             callback(null, {
               article_id,
               author_id,
