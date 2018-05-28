@@ -5,7 +5,7 @@ const collectSchema = mongoose.Schema({
   article_id: String,  // 文章id
   creat_at: {
     type: String,
-    default: new Date().getTime()
+    default: new Date()
   }
 });
 
