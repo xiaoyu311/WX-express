@@ -31,8 +31,9 @@ export default class BaseComponent {
     return;
   }
   // 时间戳转换
-  formatTime(time) {
-    return moment(time).fromNow();
+  formatTime(date) {
+    date = moment(date);
+    return date.fromNow();
   }
   // 集合清空
   Clear(Model) {

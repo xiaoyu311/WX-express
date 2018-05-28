@@ -27,8 +27,8 @@ const articleSchema = mongoose.Schema({
     default: 0
   }, // 点赞数量
   create_at: {
-    type: String,
-    default: Date.now()
+    type: Date,
+    default: Date.now
   }, // 创建时间
 });
 export default articleSchema;
