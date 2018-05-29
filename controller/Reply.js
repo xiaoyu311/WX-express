@@ -14,7 +14,7 @@ class Reply extends BaseComponent {
       user_id
     } = req.session;
     if (!user_id) {
-      this.Success(res, 1, '未登录');
+      this.Success(res, 0, '未登录');
       return;
     }
     const {
