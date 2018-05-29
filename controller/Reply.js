@@ -54,12 +54,13 @@ class Reply extends BaseComponent {
             ups,
             Reply_id
           } = item;
+          let newCreate_at = this.formatTime(create_at);
           return {
             reply_id, // 评论id
             user_id, // 评论者id
             article_id, // 文章id
             content, // 评论主体
-            create_at,
+            create_at: newCreate_at,
             ups,
             Reply_id
           };
@@ -91,12 +92,13 @@ class Reply extends BaseComponent {
           ups,
           Reply_id
         } = item;
+        let newCreate_at = this.formatTime(create_at);
         return {
           reply_id, // 评论id
           user_id, // 评论者id
           article_id, // 文章id
           content, // 评论主体
-          create_at,
+          create_at: newCreate_at,
           ups,
           Reply_id
         };
