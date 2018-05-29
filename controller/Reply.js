@@ -107,7 +107,7 @@ class Reply extends BaseComponent {
               create_at,
               ups,
               Reply_id
-            } = item;
+            } = replyInfo;
             let newCreate_at = this.formatTime(create_at);
             callback(null, {
               reply_id, // 评论id
