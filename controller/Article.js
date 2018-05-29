@@ -3,6 +3,7 @@ import ArticleModel from '../Models/Article';
 import UserModel from '../Models/User';
 import CollectModel from '../Models/Collect';
 import async from 'async';
+import { userInfo } from 'os';
 
 class Article extends BaseComponent {
   constructor() {
@@ -10,6 +11,7 @@ class Article extends BaseComponent {
     this.article_add = this.article_add.bind(this);
     this.article_list = this.article_list.bind(this);
     this.article_update = this.article_update.bind(this);
+    this.article_info = this.article_info.bind(this);
     this.article_remove = this.article_remove.bind(this);
     this.collection = this.collection.bind(this);
     this.collection_list = this.collection_list.bind(this);
@@ -72,7 +74,7 @@ class Article extends BaseComponent {
           }, (err, collectInfo) => {
             let collected = false;
             if (err) {
-              callback('文章列表错误');
+              callback('文章收藏错误');
               this.Fail(res);
               return;
             }
@@ -231,7 +233,7 @@ class Article extends BaseComponent {
       return;
     }
   }
-  // 添加收藏文章
+  // 展示收藏列表
   async collection_list(req, res) {
     try {
       let collectionList = await CollectModel.find();
@@ -242,6 +244,72 @@ class Article extends BaseComponent {
       throw new Error('收藏列表查看失败');
       return;
     }
+  }
+
+  // 文章详情
+  article_info(req, res) {
+    const { article_id } = req.params;
+    ArticleModel.findOne({ article_id }, (err, result) => { 
+      if (err) {
+        throw new Error('文章信息查询失败');
+        this.Fail(res);
+        return;
+      }
+      const {
+        article_id,
+        author_id,
+        tab,
+        content,
+        title,
+        last_reply_at,
+        good,
+        top,
+        reply_count,
+        visit_count,
+        create_at
+      } = result;
+      UserModel.findOne({ user_id: author_id }, (err, userInfo) => {
+        if (err) {
+          throw new Error('用户信息查询失败');
+          this.Fail(res);
+          return;
+        }
+        const { loginname, avatar_url } = userInfo;
+        CollectModel.findOne({
+          user_id: req.session.user_id,
+          article_id
+        }, (err, collectInfo) => {
+           let collected = false;
+           if (err) {
+             callback('文章收藏错误');
+             this.Fail(res);
+             return;
+           }
+           if (collectInfo) {
+             collected = true;
+           }
+           this.Success(res, 1, '文章信息', {
+             article_id,
+             author_id,
+             tab,
+             content,
+             title,
+             last_reply_at,
+             good,
+             top,
+             reply_count,
+             visit_count,
+             create_at,
+             collected,
+             author: {
+               loginname,
+               avatar_url
+             }
+           });
+           return;
+        });
+      });
+    });
   }
   // 删除所有文章
   clear(req, res) {

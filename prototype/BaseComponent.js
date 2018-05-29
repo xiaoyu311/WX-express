@@ -2,7 +2,7 @@ import Ids from '../Models/Ids';
 import moment from 'moment';
 export default class BaseComponent {
   constructor() {
-    this.idList = ['author_id', 'article_id', 'user_id'];
+    this.idList = ['author_id', 'article_id', 'user_id', 'reply_id'];
   }
   // 计算id 避免id重复
   async IdComputed(type) {
