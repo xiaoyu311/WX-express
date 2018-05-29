@@ -1,7 +1,8 @@
 import Ids from '../Models/Ids';
+import moment from 'moment';
 export default class BaseComponent {
   constructor() {
-    this.idList = ['author_id', 'article_id', 'user_id'];
+    this.idList = ['author_id', 'article_id', 'user_id', 'reply_id'];
   }
   // 计算id 避免id重复
   async IdComputed(type) {
@@ -28,6 +29,11 @@ export default class BaseComponent {
     }
     res.send(sendData);
     return;
+  }
+  // 时间戳转换
+  formatTime(date) {
+    date = moment(date);
+    return date.fromNow();
   }
   // 集合清空
   Clear(Model) {

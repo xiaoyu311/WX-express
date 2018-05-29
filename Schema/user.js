@@ -10,8 +10,8 @@ const UserSchema = mongoose.Schema({
   },
   // 创建时间
   create_at: {
-    type: String,
-    default: new Date().getTime()
+    type: Date,
+    default: Date.now
   }
 });
 

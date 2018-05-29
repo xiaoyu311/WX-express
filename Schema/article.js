@@ -12,11 +12,11 @@ const articleSchema = mongoose.Schema({
   }, // 最后回复时间
   good: {
     type: Boolean,
-    default: false
+    default: true
   }, // 精华是否
   top: {
     type: Boolean,
-    default: false
+    default: true
   }, // 置顶是否
   reply_count: {
     type: String,
@@ -27,8 +27,8 @@ const articleSchema = mongoose.Schema({
     default: 0
   }, // 点赞数量
   create_at: {
-    type: String,
-    default: new Date().getTime()
+    type: Date,
+    default: Date.now
   }, // 创建时间
 });
 export default articleSchema;
