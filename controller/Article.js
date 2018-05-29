@@ -166,7 +166,7 @@ class Article extends BaseComponent {
       return;
     }
   }
-  // 添加收藏文章
+  // 查看收藏列表
   async collection_list(req, res) {
     try {
       let collectionList = await CollectModel.find();
