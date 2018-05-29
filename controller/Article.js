@@ -3,7 +3,6 @@ import ArticleModel from '../Models/Article';
 import UserModel from '../Models/User';
 import CollectModel from '../Models/Collect';
 import async from 'async';
-import { userInfo } from 'os';
 
 class Article extends BaseComponent {
   constructor() {
@@ -19,12 +18,12 @@ class Article extends BaseComponent {
   }
   // 添加文章
   async article_add(req, res, next) {
-    console.log(req.sessionID);
+    // console.log(req.sessionID);
     const {
       user_id,
       loginname
     } = req.session;
-    console.log(req.session)
+    // console.log(req.session)
     if (user_id) {
       const {
         tab,
@@ -55,7 +54,7 @@ class Article extends BaseComponent {
   }
   // 文章列表
   async article_list(req, res, next) {
-    console.log(req.sessionID);
+    // console.log(req.sessionID);
     let articleList = await ArticleModel.find();
     async.map(
       articleList,
@@ -219,7 +218,7 @@ class Article extends BaseComponent {
           article_id
         });
         ArticleInfo['visit_count']++;
-        // console.log(ArticleInfo)
+        console.log(ArticleInfo)
         await ArticleInfo.save();
         this.Success(res, 1, '收藏成功');
       } catch (err) {

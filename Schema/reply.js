@@ -13,6 +13,10 @@ const replySchema = mongoose.Schema({
     type: Array,
     default: []
   },
+  Reply_id: {
+    type: String,
+    default: null
+  }, // 回复某条评论id
 });
 
 export default replySchema;

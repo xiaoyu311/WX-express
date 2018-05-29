@@ -26,7 +26,7 @@ class Sign extends BaseComponent {
         return;
       });
     } else {
-      console.log(req.sessionID);
+      // console.log(req.sessionID);
       if (User.password == password) {
         req.session.user_id = User.user_id;
         req.session.loginname = loginname;
