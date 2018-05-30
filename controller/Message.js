@@ -26,12 +26,13 @@ class Message extends BaseComponent {
         myArticleList,
         // 文章详情
         (myArticleInfo, callback) => {
-          console.log(myArticleInfo)
+          // console.log(myArticleInfo)
           ReplyModel.find({
             article_id: myArticleInfo.author_id,
             // has_read: false
             // 一条文章下的所有评论
           }, (err, ReplyList) => {
+            console.log(ReplyList);
             callback(null, ReplyList);
           })
         },
