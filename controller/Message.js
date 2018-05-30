@@ -17,6 +17,7 @@ class Message extends BaseComponent {
     const {
       user_id
     } = req.session;
+    console.log(user_id);
     // 获取所有登录用户的所有文章
     ArticleModel.find({
       author_id: user_id
