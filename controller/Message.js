@@ -29,9 +29,10 @@ class Message extends BaseComponent {
           // console.log(myArticleInfo)
           ReplyModel.find({
             article_id: myArticleInfo.author_id,
-            has_read: false
+            // has_read: false
             // 一条文章下的所有评论
           }, (err, ReplyList) => {
+            ReplyModel.find()
             console.log(ReplyList);
             callback(null, ReplyList);
           })

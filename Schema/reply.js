@@ -1,13 +1,6 @@
 import mongoose from 'mongoose';
 
-/*
- * type:
- * reply: xx 回复了你的话题
- * reply2: xx 在话题中回复了你
- */
-
 const replySchema = mongoose.Schema({
-  type: String,
   reply_id: String, // 评论id
   user_id: String, // 评论者id
   article_id: String, // 文章id
