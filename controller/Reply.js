@@ -1,5 +1,7 @@
 import BaseComponent from '../prototype/BaseComponent';
 import ReplyModel from '../Models/Reply';
+import UserModel from '../Models/User';
+import async from 'async';
 
 class Reply extends BaseComponent {
   constructor() {
@@ -14,7 +16,7 @@ class Reply extends BaseComponent {
       user_id
     } = req.session;
     if (!user_id) {
-      this.Success(res, 1, '未登录');
+      this.Success(res, 0, '未登录');
       return;
     }
     const {
@@ -44,6 +46,7 @@ class Reply extends BaseComponent {
           this.Fail(res);
           return;
         }
+
         let filterList = replyList.map(item => {
           const {
             reply_id, // 评论id
@@ -82,6 +85,7 @@ class Reply extends BaseComponent {
         this.Fail(res);
         return;
       }
+<<<<<<< HEAD
       let filterList = replyList.map(item => {
         const {
           reply_id, // 评论id
@@ -104,6 +108,58 @@ class Reply extends BaseComponent {
         };
       });
       this.Success(res, 1, '评论列表查询成功', filterList);
+=======
+      async.map(
+        replyList,
+        (replyInfo, callback) => {
+          UserModel.findOne({
+            user_id: replyInfo.user_id
+          }, (err, UserInfo) => {
+            if (err) {
+              callback('评论者id查询失败');
+              this.Fail(res);
+              return;
+            }
+            const {
+              loginname,
+              avatar_url
+            } = UserInfo;
+            const {
+              reply_id, // 评论id
+              user_id, // 评论者id
+              article_id, // 文章id
+              content, // 评论主体
+              create_at,
+              ups,
+              Reply_id
+            } = replyInfo;
+            let newCreate_at = this.formatTime(create_at);
+            callback(null, {
+              reply_id, // 评论id
+              user_id, // 评论者id
+              article_id, // 文章id
+              content, // 评论主体
+              create_at: newCreate_at,
+              ups,
+              Reply_id,
+              author: {
+                loginname,
+                avatar_url
+              }
+            });
+          });
+        },
+        (err, results) => {
+          if (err) {
+            throw new Error(err);
+            this.Fail(res);
+            return;
+          }
+          this.Success(res, 1, '评论列表', results);
+          return;
+        }
+      );
+>>>>>>> 0657a5989832017171dbf405a6e6b3ead02672e4
     });
   }
 }
