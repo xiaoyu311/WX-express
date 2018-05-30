@@ -97,18 +97,20 @@ class Article extends BaseComponent {
               create_at
             } = articleInfo;
             let newCreate_at = this.formatTime(create_at);
-            ReplyModel.count({}, (err, reply_count) => {
+            ReplyModel.find({article_id: articleInfo.article_id}, (err, ReplyMany) => {
               if (err) {
                 throw new Error('评论数量查询出错');
                 this.Fail(res);
                 return;
               }
-              CollectModel.count({}, (err, visit_count) => {
+              let reply_count = ReplyMany.length;
+              CollectModel.find({article_id: articleInfo.article_id}, (err, Collect) => {
                 if (err) {
                   throw new Error('点赞数量查询出错');
                   this.Fail(res);
                   return;
                 }
+                let visit_count = Collect.length;
                 callback(null, {
                   article_id,
                   author_id,
