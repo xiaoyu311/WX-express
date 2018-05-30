@@ -26,6 +26,7 @@ class Message extends BaseComponent {
         myArticleList,
         // 文章详情
         (myArticleInfo, callback) => {
+          console.log(myArticleInfo)
           ReplyModel.find({
             article_id: myArticleInfo.author_id,
             has_read: false
