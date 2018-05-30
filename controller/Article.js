@@ -2,6 +2,7 @@ import BaseComponent from '../prototype/BaseComponent';
 import ArticleModel from '../Models/Article';
 import UserModel from '../Models/User';
 import CollectModel from '../Models/Collect';
+import ReplyModel from '../Models/Reply';
 import async from 'async';
 
 class Article extends BaseComponent {
@@ -93,28 +94,34 @@ class Article extends BaseComponent {
               last_reply_at,
               good,
               top,
-              reply_count,
               visit_count,
               create_at
             } = articleInfo;
             let newCreate_at = this.formatTime(create_at);
-            callback(null, {
-              article_id,
-              author_id,
-              tab,
-              content,
-              title,
-              last_reply_at,
-              good,
-              top,
-              reply_count,
-              visit_count,
-              create_at: newCreate_at,
-              collected,
-              author: {
-                loginname,
-                avatar_url
+            ReplyModel.count({}, (err, reply_count) => {
+              if (err) {
+                throw new Error('评论数量查询出错');
+                this.Fail(res);
+                return;
               }
+              callback(null, {
+                article_id,
+                author_id,
+                tab,
+                content,
+                title,
+                last_reply_at,
+                good,
+                top,
+                reply_count,
+                visit_count,
+                create_at: newCreate_at,
+                collected,
+                author: {
+                  loginname,
+                  avatar_url
+                }
+              });
             });
           });
         });
@@ -247,8 +254,12 @@ class Article extends BaseComponent {
 
   // 文章详情
   article_info(req, res) {
-    const { article_id } = req.params;
-    ArticleModel.findOne({ article_id }, (err, result) => { 
+    const {
+      article_id
+    } = req.params;
+    ArticleModel.findOne({
+      article_id
+    }, (err, result) => {
       if (err) {
         throw new Error('文章信息查询失败');
         this.Fail(res);
@@ -267,45 +278,50 @@ class Article extends BaseComponent {
         visit_count,
         create_at
       } = result;
-      UserModel.findOne({ user_id: author_id }, (err, userInfo) => {
+      UserModel.findOne({
+        user_id: author_id
+      }, (err, userInfo) => {
         if (err) {
           throw new Error('用户信息查询失败');
           this.Fail(res);
           return;
         }
-        const { loginname, avatar_url } = userInfo;
+        const {
+          loginname,
+          avatar_url
+        } = userInfo;
         CollectModel.findOne({
           user_id: req.session.user_id,
           article_id
         }, (err, collectInfo) => {
-           let collected = false;
-           if (err) {
-             callback('文章收藏错误');
-             this.Fail(res);
-             return;
-           }
-           if (collectInfo) {
-             collected = true;
-           }
-           this.Success(res, 1, '文章信息', {
-             article_id,
-             author_id,
-             tab,
-             content,
-             title,
-             last_reply_at,
-             good,
-             top,
-             reply_count,
-             visit_count,
-             create_at,
-             collected,
-             author: {
-               loginname,
-               avatar_url
-             }
-           });
-           return;
+          let collected = false;
+          if (err) {
+            callback('文章收藏错误');
+            this.Fail(res);
+            return;
+          }
+          if (collectInfo) {
+            collected = true;
+          }
+          this.Success(res, 1, '文章信息', {
+            article_id,
+            author_id,
+            tab,
+            content,
+            title,
+            last_reply_at,
+            good,
+            top,
+            reply_count,
+            visit_count,
+            create_at,
+            collected,
+            author: {
+              loginname,
+              avatar_url
+            }
+          });
+          return;
         });
       });
     });

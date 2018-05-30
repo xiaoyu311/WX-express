@@ -85,30 +85,6 @@ class Reply extends BaseComponent {
         this.Fail(res);
         return;
       }
-<<<<<<< HEAD
-      let filterList = replyList.map(item => {
-        const {
-          reply_id, // 评论id
-          user_id, // 评论者id
-          article_id, // 文章id
-          content, // 评论主体
-          create_at,
-          ups,
-          Reply_id
-        } = item;
-        let newCreate_at = this.formatTime(create_at);
-        return {
-          reply_id, // 评论id
-          user_id, // 评论者id
-          article_id, // 文章id
-          content, // 评论主体
-          create_at: newCreate_at,
-          ups,
-          Reply_id
-        };
-      });
-      this.Success(res, 1, '评论列表查询成功', filterList);
-=======
       async.map(
         replyList,
         (replyInfo, callback) => {
@@ -159,7 +135,6 @@ class Reply extends BaseComponent {
           return;
         }
       );
->>>>>>> 0657a5989832017171dbf405a6e6b3ead02672e4
     });
   }
 }
