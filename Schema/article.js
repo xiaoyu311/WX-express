@@ -6,10 +6,6 @@ const articleSchema = mongoose.Schema({
   tab: String, // 类型
   content: String, // 内容
   title: String, // 标题
-  last_reply_at: {
-    type: String,
-    default: ''
-  }, // 最后回复时间
   good: {
     type: Boolean,
     default: true
@@ -18,17 +14,13 @@ const articleSchema = mongoose.Schema({
     type: Boolean,
     default: true
   }, // 置顶是否
-  reply_count: {
-    type: String,
-    default: 0
-  }, // 回复数量
-  visit_count: {
-    type: String,
-    default: 0
-  }, // 点赞数量
   create_at: {
     type: Date,
     default: Date.now
   }, // 创建时间
+  last_reply_at: {
+    type: Date,
+    default: Date.now
+  }
 });
 export default articleSchema;

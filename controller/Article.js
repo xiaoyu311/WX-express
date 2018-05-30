@@ -91,10 +91,9 @@ class Article extends BaseComponent {
               tab,
               content,
               title,
-              last_reply_at,
               good,
               top,
-              visit_count,
+              last_reply_at,
               create_at
             } = articleInfo;
             let newCreate_at = this.formatTime(create_at);
@@ -104,23 +103,30 @@ class Article extends BaseComponent {
                 this.Fail(res);
                 return;
               }
-              callback(null, {
-                article_id,
-                author_id,
-                tab,
-                content,
-                title,
-                last_reply_at,
-                good,
-                top,
-                reply_count,
-                visit_count,
-                create_at: newCreate_at,
-                collected,
-                author: {
-                  loginname,
-                  avatar_url
+              CollectModel.count({}, (err, visit_count) => {
+                if (err) {
+                  throw new Error('点赞数量查询出错');
+                  this.Fail(res);
+                  return;
                 }
+                callback(null, {
+                  article_id,
+                  author_id,
+                  tab,
+                  content,
+                  title,
+                  last_reply_at,
+                  good,
+                  top,
+                  reply_count,
+                  visit_count,
+                  create_at: newCreate_at,
+                  collected,
+                  author: {
+                    loginname,
+                    avatar_url
+                  }
+                });
               });
             });
           });
@@ -221,12 +227,6 @@ class Article extends BaseComponent {
           user_id,
           article_id
         });
-        let ArticleInfo = await ArticleModel.findOne({
-          article_id
-        });
-        ArticleInfo['visit_count']++;
-        console.log(ArticleInfo)
-        await ArticleInfo.save();
         this.Success(res, 1, '收藏成功');
       } catch (err) {
         throw new Error('收藏失败');
@@ -271,11 +271,9 @@ class Article extends BaseComponent {
         tab,
         content,
         title,
-        last_reply_at,
         good,
         top,
-        reply_count,
-        visit_count,
+        last_reply_at,
         create_at
       } = result;
       UserModel.findOne({
@@ -296,32 +294,45 @@ class Article extends BaseComponent {
         }, (err, collectInfo) => {
           let collected = false;
           if (err) {
-            callback('文章收藏错误');
             this.Fail(res);
             return;
           }
           if (collectInfo) {
             collected = true;
           }
-          this.Success(res, 1, '文章信息', {
-            article_id,
-            author_id,
-            tab,
-            content,
-            title,
-            last_reply_at,
-            good,
-            top,
-            reply_count,
-            visit_count,
-            create_at,
-            collected,
-            author: {
-              loginname,
-              avatar_url
+          ReplyModel.count({}, (err, reply_count) => {
+            if (err) {
+              throw new Error('评论数量查询出错');
+              this.Fail(res);
+              return;
             }
+            CollectModel.count({}, (err, visit_count) => {
+              if (err) {
+                throw new Error('点赞数量查询出错');
+                this.Fail(res);
+                return;
+              }
+              this.Success(res, 1, '文章信息', {
+                article_id,
+                author_id,
+                tab,
+                content,
+                title,
+                good,
+                top,
+                reply_count,
+                visit_count,
+                last_reply_at,
+                create_at,
+                collected,
+                author: {
+                  loginname,
+                  avatar_url
+                }
+              });
+              return;
+            });
           });
-          return;
         });
       });
     });

@@ -6,7 +6,7 @@ const collectSchema = mongoose.Schema({
   creat_at: {
     type: Date,
     default: Date.now
-  }
+  },
 });
 
 export default collectSchema;
