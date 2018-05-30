@@ -37,7 +37,15 @@ class Message extends BaseComponent {
           })
         },
         (err, result) => {
-          res.send({ status: 1, message: 'sdd', data: result });
+          let replyList = [];
+          result.forEach(item => {
+            if (item.length) {
+              item.forEach(value => {
+                replyList.push(value)
+              });
+            }
+          });
+          res.send({ status: 1, message: 'sdd', data: replyList });
         }
       );
     });
