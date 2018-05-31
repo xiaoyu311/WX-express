@@ -26,17 +26,12 @@ class Reply extends BaseComponent {
       content,
       Reply_id
     } = req.body;
-    let other_has_read = true;
-    if (Reply_id) {
-      other_has_read = false;
-    }
     let reply_id = await this.IdComputed('reply_id');
     const newReply = {
       reply_id,
       user_id,
       article_id,
       content,
-      other_has_read,
       Reply_id
     };
     ReplyModel.create(newReply, err => {
@@ -60,7 +55,6 @@ class Reply extends BaseComponent {
             content, // 评论主体
             create_at,
             ups,
-            other_has_read,
             Reply_id
           } = item;
           let newCreate_at = this.formatTime(create_at);
@@ -70,7 +64,6 @@ class Reply extends BaseComponent {
             article_id, // 文章id
             content, // 评论主体
             create_at: newCreate_at,
-            other_has_read,
             ups,
             Reply_id
           };

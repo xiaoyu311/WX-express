@@ -21,30 +21,27 @@ class Message extends BaseComponent {
       this.Success(res, 0, '未登录');
       return;
     }
-    ArticleModel.find({
-      author_id: user_id
-    }, (err, myArticleList) => {
-      if (err) {
-        throw new Error('查询用户文章失败');
-        this.Fail(res);
-        return;
-      }
+    try {
+      let userArticle = await ArticleModel.find({
+        author_id: user_id
+      })
       async.map(
-        myArticleList,
-        // 文章详情
-        (myArticleInfo, callback) => {
-          // console.log(myArticleInfo)
-          ReplyModel.find({
-            article_id: myArticleInfo.author_id,
-            // has_read: false
-            // 一条文章下的所有评论
-          }, (err, ReplyList) => {
-            // ReplyModel.find()
-            // console.log(ReplyList);
-            callback(null, ReplyList);
-          })
+        userArticle,
+        async (userArticleInfo, callback) => {
+          try {
+            // 一篇文章下的评论
+            let ArticleReply = await ReplyModel.find({
+              article_id: userArticleInfo.article_id,
+              Reply_id: null
+            });
+            await callback(null, ArticleReply);
+          } catch (err) {
+            throw new Error('文章下的评论');
+            this.Fail(res);
+            return;
+          }
         },
-        (err, result) => {
+        async (err, result) => {
           if (err) {
             throw new Error('查询评论失败');
             this.Fail(res);
@@ -58,29 +55,25 @@ class Message extends BaseComponent {
               });
             }
           });
-          ReplyModel.find({}, (err, AllReplyList) => {
-            if (err) {
-              throw new Error('查询评论失败');
-              this.Fail(res);
-              return;
-            }
-            let ReplyList = [];
-            AllReplyList.forEach(item => {
-              AllReplyList.forEach(value => {
-                if (item.reply_id == value.Reply_id) {
-                  ReplyList.push(value);
-                }
-              })
-            });
-            let obj = {};
-            let uniqueList = [...replyList, ...ReplyList].filter(item => {
-              return obj.hasOwnProperty(typeof item + JSON.stringify(item)) ? false : (obj[typeof item + JSON.stringify(item)] = true);
-            })
-            this.Success(res, 1, '未读消息', uniqueList)
-          });
+          try {
+            // 当前用户的所有评论
+            let UserReply = await ReplyModel.find({ user_id });
+            let AllReply = await ReplyModel.find({ Reply_id: !null });
+            console.log(AllReply)
+            this.Success(res, 1, '未读消息');
+            return;
+          } catch (err) {
+            throw new Error('用户评论查询失败');
+            this.Fail(res);
+            return;
+          }
         }
       );
-    });
+    } catch (err) {
+      throw new Error('文章列表查询失败');
+      this.Fail(res);
+      return;
+    }
   }
 }
 

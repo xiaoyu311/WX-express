@@ -13,10 +13,7 @@ const replySchema = mongoose.Schema({
     type: Array,
     default: []
   },
-  other_has_read: {
-    type: Boolean,
-  },
-  own_has_read: {
+  has_read: {
     type: Boolean,
     default: false
   },
