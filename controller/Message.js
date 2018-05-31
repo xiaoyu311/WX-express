@@ -55,8 +55,11 @@ class Message extends BaseComponent {
                 }
               })
             });
-            console.log(ReplyList);
-            res.send({ status: 1, message: 'sdd', data: replyList });
+            res.send({
+              status: 1,
+              message: 'sdd',
+              data: [...replyList, ...ReplyList]
+            });
           });
         }
       );
