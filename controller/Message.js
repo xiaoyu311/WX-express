@@ -13,15 +13,34 @@ class Message extends BaseComponent {
 
   has_read(req, res) {}
 
-  not_has_read(req, res) {
+  async not_has_read(req, res) {
     const {
       user_id
     } = req.session;
+    if (!user_id) {
+      this.Success(res, 0, '未登录');
+      return;
+    }
+    let userReply = [];
     // console.log(user_id);
     // 获取所有登录用户的所有文章
+    try {
+      userReply = await ReplyModel.find({
+        user_id
+      });
+    } catch (err) {
+      throw new Error('用户评论查询出错');
+      this.Fail(res);
+      return;
+    }
     ArticleModel.find({
       author_id: user_id
     }, (err, myArticleList) => {
+      if (err) {
+        throw new Error('查询用户文章失败');
+        this.Fail(res);
+        return;
+      }
       async.map(
         myArticleList,
         // 文章详情
@@ -38,6 +57,11 @@ class Message extends BaseComponent {
           })
         },
         (err, result) => {
+          if (err) {
+            throw new Error('查询评论失败');
+            this.Fail(res);
+            return;
+          }
           let replyList = [];
           result.forEach(item => {
             if (item.length) {
@@ -47,6 +71,11 @@ class Message extends BaseComponent {
             }
           });
           ReplyModel.find({}, (err, AllReplyList) => {
+            if (err) {
+              throw new Error('查询评论失败');
+              this.Fail(res);
+              return;
+            }
             let ReplyList = [];
             replyList.forEach(item => {
               AllReplyList.forEach(value => {
@@ -56,14 +85,10 @@ class Message extends BaseComponent {
               })
             });
             let obj = {};
-            let uniqueList = [...replyList, ...ReplyList].filter(item => {
+            let uniqueList = [...replyList, ...ReplyList, ...userReply].filter(item => {
               return obj.hasOwnProperty(typeof item + JSON.stringify(item)) ? false : (obj[typeof item + JSON.stringify(item)] = true);
             })
-            res.send({
-              status: 1,
-              message: 'sdd',
-              data: uniqueList
-            });
+            this.Success(res, 1, '未读消息', uniqueList)
           });
         }
       );
