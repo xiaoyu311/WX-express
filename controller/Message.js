@@ -58,7 +58,9 @@ class Message extends BaseComponent {
           try {
             // 当前用户的所有评论
             let UserReply = await ReplyModel.find({ user_id });
-            let AllReply = await ReplyModel.find({ Reply_id: null });
+            let allReply = await ReplyModel.find();
+            let AllReply = allReply.filter(item => item.Reply_id != null);
+            
             console.log(AllReply)
             this.Success(res, 1, '未读消息');
             return;
