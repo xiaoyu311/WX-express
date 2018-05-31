@@ -55,10 +55,14 @@ class Message extends BaseComponent {
                 }
               })
             });
+            let obj = {};
+            let uniqueList = [...replyList, ...ReplyList].filter(item => {
+              return obj.hasOwnProperty(typeof item + JSON.stringify(item)) ? false : (obj[typeof item + JSON.stringify(item)] = true);
+            })
             res.send({
               status: 1,
               message: 'sdd',
-              data: [...replyList, ...ReplyList]
+              data: uniqueList
             });
           });
         }
