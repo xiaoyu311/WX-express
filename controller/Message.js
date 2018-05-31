@@ -52,7 +52,7 @@ class Message extends BaseComponent {
           let UserReply = await ReplyModel.find({
             user_id,
           });
-          UserReply.each(
+          async.each(
             UserReply,
             async (UserReplyInfo, callback) => {
               try {
