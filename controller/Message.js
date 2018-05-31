@@ -21,18 +21,6 @@ class Message extends BaseComponent {
       this.Success(res, 0, '未登录');
       return;
     }
-    let userReply = [];
-    // console.log(user_id);
-    // 获取所有登录用户的所有文章
-    try {
-      userReply = await ReplyModel.find({
-        user_id
-      });
-    } catch (err) {
-      throw new Error('用户评论查询出错');
-      this.Fail(res);
-      return;
-    }
     ArticleModel.find({
       author_id: user_id
     }, (err, myArticleList) => {
@@ -51,7 +39,7 @@ class Message extends BaseComponent {
             // has_read: false
             // 一条文章下的所有评论
           }, (err, ReplyList) => {
-            ReplyModel.find()
+            // ReplyModel.find()
             // console.log(ReplyList);
             callback(null, ReplyList);
           })
@@ -77,7 +65,7 @@ class Message extends BaseComponent {
               return;
             }
             let ReplyList = [];
-            replyList.forEach(item => {
+            AllReplyList.forEach(item => {
               AllReplyList.forEach(value => {
                 if (item.reply_id == value.Reply_id) {
                   ReplyList.push(value);
@@ -85,7 +73,7 @@ class Message extends BaseComponent {
               })
             });
             let obj = {};
-            let uniqueList = [...replyList, ...ReplyList, ...userReply].filter(item => {
+            let uniqueList = [...replyList, ...ReplyList].filter(item => {
               return obj.hasOwnProperty(typeof item + JSON.stringify(item)) ? false : (obj[typeof item + JSON.stringify(item)] = true);
             })
             this.Success(res, 1, '未读消息', uniqueList)
