@@ -17,7 +17,7 @@ class Message extends BaseComponent {
     const {
       user_id
     } = req.session;
-    console.log(user_id);
+    // console.log(user_id);
     // 获取所有登录用户的所有文章
     ArticleModel.find({
       author_id: user_id
@@ -33,7 +33,7 @@ class Message extends BaseComponent {
             // 一条文章下的所有评论
           }, (err, ReplyList) => {
             ReplyModel.find()
-            console.log(ReplyList);
+            // console.log(ReplyList);
             callback(null, ReplyList);
           })
         },
@@ -46,7 +46,18 @@ class Message extends BaseComponent {
               });
             }
           });
-          res.send({ status: 1, message: 'sdd', data: replyList });
+          ReplyModel.find({}, (err, AllReplyList) => {
+            let ReplyList = [];
+            replyList.forEach(item => {
+              AllReplyList.forEach(value => {
+                if (item.reply_id == value.Reply_id) {
+                  ReplyList.push(value);
+                }
+              })
+            });
+            console.log(ReplyList);
+            res.send({ status: 1, message: 'sdd', data: replyList });
+          });
         }
       );
     });
