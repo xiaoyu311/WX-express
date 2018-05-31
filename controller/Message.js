@@ -47,6 +47,7 @@ class Message extends BaseComponent {
             this.Fail(res);
             return;
           }
+          // 文章下的评论
           let replyList = [];
           result.forEach(item => {
             if (item.length) {
@@ -59,10 +60,19 @@ class Message extends BaseComponent {
             // 当前用户的所有评论
             let UserReply = await ReplyModel.find({ user_id });
             let allReply = await ReplyModel.find();
+            // 所有是回复的评论
             let AllReply = allReply.filter(item => item.Reply_id != null);
-            
-            console.log(AllReply)
-            this.Success(res, 1, '未读消息');
+            let obj = {};
+            // 被回复的评论
+            let repliedList = [];
+            UserReply.forEach(item => { 
+              AllReply.forEach(value => {
+                if (item.reply_id == value.Reply_id) {
+                  repliedList.push(value);
+                }
+              });
+            });
+            this.Success(res, 1, '未读消息', [...replyList, ...repliedList]);
             return;
           } catch (err) {
             throw new Error('用户评论查询失败');
