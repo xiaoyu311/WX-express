@@ -43,7 +43,7 @@ class Message extends BaseComponent {
             return;
           }
         },
-        err => {
+        async err => {
           if (err) {
             throw new Error('1评论修改状态失败');
             this.Fail(res);
