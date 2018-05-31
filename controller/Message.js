@@ -34,6 +34,8 @@ class Message extends BaseComponent {
               has_read: false
             }, {
               has_read: true
+            }, {
+              multi: true
             });
             await callback(null);
           } catch (err) {
@@ -56,11 +58,14 @@ class Message extends BaseComponent {
             UserReply,
             async (UserReplyInfo, callback) => {
               try {
+                console.log(UserReplyInfo)
                 await ReplyModel.update({
                   Reply_id: UserReplyInfo.reply_id,
                   has_read: false
                 }, {
                   has_read: true
+                }, {
+                  multi: true
                 });
                 await callback(null);
               } catch (err) {
