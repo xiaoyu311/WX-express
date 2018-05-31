@@ -8,6 +8,7 @@ class Message extends BaseComponent {
   constructor() {
     super()
     this.has_read = this.has_read.bind(this);
+    this.mark_all = this.mark_all.bind(this);
     this.not_has_read = this.not_has_read.bind(this);
   }
 
