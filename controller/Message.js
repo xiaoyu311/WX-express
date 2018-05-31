@@ -11,6 +11,83 @@ class Message extends BaseComponent {
     this.not_has_read = this.not_has_read.bind(this);
   }
 
+  async mark_all(req, res) {
+    const {
+      user_id
+    } = req.session;
+    if (!user_id) {
+      this.Success(res, 0, '未登录');
+      return;
+    }
+    try {
+      let userArticle = await ArticleModel.find({
+        author_id: user_id
+      });
+      async.each(
+        userArticle,
+        async (userArticleInfo, callback) => {
+          try {
+            // 一篇文章下的评论
+            await ReplyModel.update({
+              article_id: userArticleInfo.article_id,
+              Reply_id: null,
+              has_read: false
+            }, {
+              has_read: true
+            });
+            await callback(null);
+          } catch (err) {
+            throw new Error('文章下评论修改状态失败');
+            this.Fail(res);
+            await callback(err);
+            return;
+          }
+        },
+        err => {
+          if (err) {
+            throw new Error('1评论修改状态失败');
+            this.Fail(res);
+            return;
+          }
+          let UserReply = await ReplyModel.find({
+            user_id,
+          });
+          UserReply.each(
+            UserReply,
+            async (UserReplyInfo, callback) => {
+              try {
+                await ReplyModel.update({
+                  Reply_id: UserReplyInfo.reply_id,
+                  has_read: false
+                }, {
+                  has_read: true
+                });
+                await callback(null);
+              } catch (err) {
+                throw new Error('2评论修改状态失败');
+                this.Fail(res);
+                callback(err);
+                return;
+              }
+            },
+            err => {
+              if (err) {
+                throw new Error('3评论修改状态失败');
+                this.Fail(res);
+                return;
+              }
+              this.Success(res, 1, '修改成功');
+            }
+          );
+        }
+      );
+    } catch (err) {
+      throw new Error('文章列表查询失败');
+      this.Fail(res);
+      return;
+    }
+  }
+
   has_read(req, res) {}
 
   async not_has_read(req, res) {
@@ -32,7 +109,8 @@ class Message extends BaseComponent {
             // 一篇文章下的评论
             let ArticleReply = await ReplyModel.find({
               article_id: userArticleInfo.article_id,
-              Reply_id: null
+              Reply_id: null,
+              has_read: false
             });
             await callback(null, ArticleReply);
           } catch (err) {
@@ -58,14 +136,18 @@ class Message extends BaseComponent {
           });
           try {
             // 当前用户的所有评论
-            let UserReply = await ReplyModel.find({ user_id });
-            let allReply = await ReplyModel.find();
+            let UserReply = await ReplyModel.find({
+              user_id,
+            });
+            let allReply = await ReplyModel.find({
+              has_read: false
+            });
             // 所有是回复的评论
             let AllReply = allReply.filter(item => item.Reply_id != null);
             let obj = {};
             // 被回复的评论
             let repliedList = [];
-            UserReply.forEach(item => { 
+            UserReply.forEach(item => {
               AllReply.forEach(value => {
                 if (item.reply_id == value.Reply_id) {
                   repliedList.push(value);
