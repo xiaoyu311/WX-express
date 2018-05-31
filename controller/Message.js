@@ -69,8 +69,8 @@ class Message extends BaseComponent {
                 });
                 await callback(null);
               } catch (err) {
-                throw new Error('2评论修改状态失败');
                 this.Fail(res);
+                throw new Error(err);
                 callback(err);
                 return;
               }
